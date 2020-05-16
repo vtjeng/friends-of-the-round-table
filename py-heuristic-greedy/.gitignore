@@ -1,0 +1,12 @@
+# Ignore PyCharm files
+.idea/
+
+# Ignore compiled python files
+*.pyc
+
+# Ignore checkpoint and log files written out by main.py
+checkpoint/
+logs/
+
+# Ignore personal notes
+notes/
