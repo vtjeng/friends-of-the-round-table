@@ -6,7 +6,7 @@ import pickle
 
 for (dirpath, dirnames, filenames) in os.walk(CHECKPOINT_DIR):
     print(os.path.split(dirpath)[-1])
-    for filename in sorted(filenames):
+    for filename in sorted(filenames, key=lambda x: int(os.path.splitext(x)[0])):
         # print(filename)
         cp_file = os.path.join(dirpath, filename)
         with open(cp_file, "rb") as f:

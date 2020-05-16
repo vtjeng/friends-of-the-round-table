@@ -9,46 +9,29 @@ from swapper import nameToSwapper
 from swapper_util import get_best_swap_sequence_logged
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="""
+        Conduct a heuristic search for the minimum number of swaps required for
+        a table of the specified size. For each trial, the `swapper` specified
+        is used to generate the next swap that we will attempt.
+        """
+    )
+    parser.add_argument("table_size", type=int, help="Number of people at the table.")
     parser.add_argument(
         "--swapper",
         type=str,
-        help="Swapper that selects the next swap to attempt. Options: {}".format(
-            list(nameToSwapper.keys())
-        ),
+        help="Swapper that selects the next swap to attempt",
+        default="GreedySwapper",
+        choices=list(nameToSwapper.keys()),
     )
-    parser.add_argument("--table_size", type=int, help="Number of people on the table.")
     parser.add_argument(
         "--info",
         action="store_true",
         help="If specified, attempts to find checkpoint file and provides information in checkpoint file if found.",
     )
-    parser.add_argument(
-        "--summary",
-        action="store_true",
-        help="Summarizes all information found in checkpoint files.",
-    )
     args = parser.parse_args()
 
-    if args.summary:
-        for (dirpath, dirnames, filenames) in os.walk(CHECKPOINT_DIR):
-            if dirpath != CHECKPOINT_DIR:
-                dirname = os.path.split(dirpath)[-1]
-                print(dirname)
-            for filename in filenames:
-                # print(filename)
-                cp_file = os.path.join(dirpath, filename)
-                with open(cp_file, "rb") as f:
-                    [i, best_swap_sequences, current_min_swap_num] = pickle.load(f)
-                print(
-                    "\t{table_size} - best: {high_score:>4}, seen in {num_achieved:>4}/{num_trials:>8}".format(
-                        table_size=os.path.splitext(filename)[0],
-                        num_trials=i,
-                        high_score=current_min_swap_num,
-                        num_achieved=len(best_swap_sequences),
-                    )
-                )
-    elif args.info:
+    if args.info:
         cp_dir = os.path.join(CHECKPOINT_DIR, args.swapper)
         cp_file = os.path.join(cp_dir, str(args.table_size) + ".pickle")
         if os.path.isfile(cp_file):

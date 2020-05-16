@@ -67,16 +67,6 @@ class RandomSwapper(AbstractSwapper):
 
 
 class GreedySwapper(AbstractSwapper):
-
-    # def generate_swap(self):
-    #
-    #     d = {swap: num_new_friend_pairs(self.seating_arrangement, self.existing_friend_pairs, swap) for swap in self.all_possible_swaps}
-    #
-    #     max_new_friends = max(d.itervalues())
-    #
-    #     max_swaps = map(lambda(k, v): k, filter(lambda (k, v): v == max_new_friends, d.iteritems()))
-    #
-    #     return random.choice(max_swaps)
     def generate_swap(self):
         max_swaps = []
         max_new_friends = 1
