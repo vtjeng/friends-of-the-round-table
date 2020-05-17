@@ -14,7 +14,7 @@ if __name__ == "__main__":
         Check every possible sequence of swaps for a table of the specified size, 
         counting the number of results that match the minimum number of swaps required
         and displays one such sequence of swaps at the end.
-        """
+        """,
     )
     parser.add_argument("table_size", type=int, help="Number of people at the table.")
     args = parser.parse_args()
