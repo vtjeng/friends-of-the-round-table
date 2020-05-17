@@ -11,3 +11,6 @@ Tradition demands that, at every meeting, the seating arrangement must stay the 
 Having recently heard of 6.006 at MIT, King Arthur has become interested in the minimum number of steps it would take for a new set of knights (and King Arthur) to all be "bromigos".
 
 Given that the size of the castle is finite, King Arthur hopes that your space complexity will also be reasonable.
+
+# What's in the repo?
+Each folder implements an algorithm to search for the minimum number of steps, in the format `<language>-<short-approach-description>`.
