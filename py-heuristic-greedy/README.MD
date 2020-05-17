@@ -1,4 +1,4 @@
-A heuristic approach implemented in Python. Your entry points is the script `heuristic_search.py`
+A heuristic approach implemented in Python. Your entry point is the script `heuristic_search.py`
 
 ```
 $ ./heuristic_search.py --help
