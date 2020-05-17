@@ -69,4 +69,6 @@ if __name__ == "__main__":
                 )
                 break
 
+    pbar.close()
+
     print("Covering swaps: {}".format(covering_swaps))

@@ -6,7 +6,7 @@ import pickle
 
 from constants import CHECKPOINT_DIR
 from swapper import nameToSwapper
-from swapper_util import get_best_swap_sequence_logged
+from swapper_util import get_best_swap_sequence_logged, get_checkpoint_file
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -20,20 +20,27 @@ if __name__ == "__main__":
     parser.add_argument(
         "--swapper",
         type=str,
-        help="Swapper that selects the next swap to attempt",
+        help="Swapper that selects the next swap to attempt.",
         default="GreedySwapper",
         choices=list(nameToSwapper.keys()),
     )
     parser.add_argument(
         "--info",
         action="store_true",
-        help="If specified, attempts to find checkpoint file and provides information in checkpoint file if found.",
+        help="""If specified, print information in corresponding checkpoint file
+        and exit.
+        """,
+    )
+    parser.add_argument(
+        "--num-trials",
+        type=int,
+        help="Number of trials to run. Continues indefinitely if unspecified.",
+        default=10000,
     )
     args = parser.parse_args()
 
     if args.info:
-        cp_dir = os.path.join(CHECKPOINT_DIR, args.swapper)
-        cp_file = os.path.join(cp_dir, str(args.table_size) + ".pickle")
+        cp_file = get_checkpoint_file(args.swapper, args.table_size)
         if os.path.isfile(cp_file):
             with open(cp_file, "rb") as f:
                 [i, best_swap_sequences, current_min_swap_num] = pickle.load(f)
@@ -53,4 +60,6 @@ if __name__ == "__main__":
         else:
             print("No checkpoint file found.")
     else:
-        get_best_swap_sequence_logged(nameToSwapper[args.swapper], args.table_size)
+        get_best_swap_sequence_logged(
+            nameToSwapper[args.swapper], args.table_size, args.num_trials
+        )
