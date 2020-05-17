@@ -56,10 +56,7 @@ class SwapperRunner(object):
         self.cp_file = get_checkpoint_file(swapper, table_size)
         if os.path.isfile(self.cp_file):
             with open(self.cp_file, "rb") as f:
-                [
-                    self.last_checkpoint,
-                    self.best_swap_sequences,
-                ] = pickle.load(f)[:2]
+                [self.last_checkpoint, self.best_swap_sequences,] = pickle.load(f)[:2]
             self.current_min_swap_num = len(self.best_swap_sequences[0][1])
             logging.debug(
                 "Restarted from checkpoint at trial #{} with high score at {}.".format(
@@ -102,12 +99,15 @@ class SwapperRunner(object):
                     "trial: {}, last checkpoint: {}, min swaps: {}".format(
                         i,
                         self.last_checkpoint,
-                        self.current_min_swap_num if len(self.best_swap_sequences) > 0 else "∞",
+                        self.current_min_swap_num
+                        if len(self.best_swap_sequences) > 0
+                        else "∞",
                     )
                 )
                 s = self.swapper(list(range(self.table_size)))
                 while (
-                    not s.is_everyone_friends() and len(s.swaps) < self.current_min_swap_num
+                    not s.is_everyone_friends()
+                    and len(s.swaps) < self.current_min_swap_num
                 ):
                     # Trying to terminate earlier here by checking the number of friend pairings outstanding
                     # and bounding the number of steps to get there by dividing that number by 4 does not seem to
@@ -139,6 +139,7 @@ class SwapperRunner(object):
                     self.write_checkpoint(i)
 
             self.write_checkpoint(i)
+
 
 def get_checkpoint_file(swapper, table_size):
     return os.path.join(get_checkpoint_dir(swapper), str(table_size) + ".pickle")
