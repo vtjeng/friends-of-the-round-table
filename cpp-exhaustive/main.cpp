@@ -1,4 +1,4 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include <array>
 #include <cassert>
 #include <iostream>
@@ -157,8 +157,8 @@ std::optional<std::vector<SeatPair>> get_switches_recursive_helper(
  @returns A sequence of the positions of the pairs of seats being switched, or
      std::nullopt if no such sequence of length up to `num_switches` exists.
  */
-std::optional<std::vector<SeatPair>>
-get_switches_recursive(int n, int num_switches) {
+std::optional<std::vector<SeatPair>> get_switches_recursive(int n,
+                                                            int num_switches) {
   std::vector<SeatPair> switches;
   switches.reserve(num_switches);
 
@@ -182,14 +182,7 @@ get_switches_recursive(int n, int num_switches) {
                                        adjacency_count);
 }
 
-void print_usage(const char* program_name) {
-  std::cerr << "Usage: " << program_name << " -n <num_people> -s <num_switches>\n"
-            << "Options:\n"
-            << "  -n <num_people>    Number of people at the table\n"
-            << "  -s <num_switches>  Maximum number of seat switches allowed\n";
-}
-
-int main(int argc, char* argv[]) {
+int main() {
   int n = 7;
   int num_switches = 4;
 
