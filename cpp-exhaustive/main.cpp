@@ -56,13 +56,13 @@ void print(std::vector<SeatPair> const &input) {
 /**
  Given a table of size `n`, determines whether it is possible for every guest
  to have sat next to every other guest at some point, given that there are
- `num_remaining_switches` available, the current configuration of guests in
- seats is `current_table`, and `adjacency_count` stores information on how many
- times guests have already sat next to each other.
+ `num_remaining_switches` available and the current configuration of guests in
+ seats is `current_table`. Some guests may have already sat next to each other;
+ this is tracked in `adjacency_count`.
 
- @param num_remaining_switches How many remaining switches available.
- @param current_switches List containing the pairs of seats switched such that
-     `table` reaches its current state.
+ @param num_remaining_switches How many remaining switches are available.
+ @param current_switches List containing the pairs of seats switched so far
+     such that `table` reaches its current state.
  @param current_table current_table[i] is the label of the guest sitting
      in the ith seat. Note that the table is "circular" (i.e. the first and
      last entries of current_table are considered to be sitting next to each
@@ -80,7 +80,7 @@ void print(std::vector<SeatPair> const &input) {
      std::nullopt if no such sequence of length up to `num_remaining_switches`
      exists.
  */
-std::optional<std::vector<SeatPair>> get_switches_recursive_helper(
+std::optional<std::vector<SeatPair>> get_switches_helper(
     const int num_remaining_switches, std::vector<SeatPair> &current_switches,
     std::vector<int> &current_table, std::vector<int> &adjacency_count) {
   const int n = current_table.size();
@@ -120,9 +120,8 @@ std::optional<std::vector<SeatPair>> get_switches_recursive_helper(
       // if not, we check if the switch we executed was the last available.
       if (num_remaining_switches > 1) {
         const std::optional<std::vector<SeatPair>> r =
-            get_switches_recursive_helper(num_remaining_switches - 1,
-                                          current_switches, current_table,
-                                          adjacency_count);
+            get_switches_helper(num_remaining_switches - 1, current_switches,
+                                current_table, adjacency_count);
         if (r.has_value()) {
           // if we find a good sequence of switches with the recursive
           // call, we return it
@@ -147,8 +146,8 @@ std::optional<std::vector<SeatPair>> get_switches_recursive_helper(
 
 /**
  Given a table of size `n`, determines whether it is possible for every guest
- to have sat next to every other guest at some point, with up to `num_switches`
- pairs of guests switching seats.
+ to have sat next to every other guest at some point, when we have up to
+ `num_switches` pairs of guests switching seats.
 
  See
  https://math.stackexchange.com/questions/833541/making-friends-around-a-circular-table
@@ -157,8 +156,12 @@ std::optional<std::vector<SeatPair>> get_switches_recursive_helper(
  @returns A sequence of the positions of the pairs of seats being switched, or
      std::nullopt if no such sequence of length up to `num_switches` exists.
  */
-std::optional<std::vector<SeatPair>> get_switches_recursive(int n,
-                                                            int num_switches) {
+std::optional<std::vector<SeatPair>> get_switches(int n, int num_switches) {
+  // This function initializes:
+  //   1. An empty sequence of switches.
+  //   2. The table in its initial configuration.
+  //   3. An adjacency count corresponding to the initial table configuration.
+
   std::vector<SeatPair> switches;
   switches.reserve(num_switches);
 
@@ -178,16 +181,14 @@ std::optional<std::vector<SeatPair>> get_switches_recursive(int n,
     ++adjacency_count[pair_to_index(SeatPair{table[i], table[i + 1]})];
   }
 
-  return get_switches_recursive_helper(num_switches, switches, table,
-                                       adjacency_count);
+  return get_switches_helper(num_switches, switches, table, adjacency_count);
 }
 
 int main() {
-  int n = 7;
-  int num_switches = 4;
+  int n = 9;
+  int num_switches = 5;
 
-  std::optional<std::vector<SeatPair>> v =
-      get_switches_recursive(n, num_switches);
+  std::optional<std::vector<SeatPair>> v = get_switches(n, num_switches);
   std::cout << "For " << n << " people with " << num_switches
             << " switches:" << std::endl;
   if (v.has_value()) {
