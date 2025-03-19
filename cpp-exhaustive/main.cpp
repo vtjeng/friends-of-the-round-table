@@ -33,7 +33,7 @@ struct SeatPair {
  {pair_to_index({x1, x2}) | 0≤x1≤n ∧ 0≤x2≤n ∧ x1≠x2} = {0, 1, ..., T_{n+1}-1},
  where `T_n` is the nth triangular number.
  */
-int pair_to_index(const SeatPair &input) {
+inline int pair_to_index(const SeatPair &input) {
   if (input.first > input.second) {
     return input.first * (input.first - 1) / 2 + input.second;
   }
