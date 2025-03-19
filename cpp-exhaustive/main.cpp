@@ -1,5 +1,6 @@
 ﻿#include <algorithm>
 #include <array>
+#include <cmath>
 #include <cassert>
 #include <iostream>
 #include <numeric>
@@ -184,16 +185,38 @@ std::optional<std::vector<SeatPair>> get_switches(int n, int switch_budget) {
   return get_switches_helper(switch_budget, switches, table, adjacency_count);
 }
 
+std::vector<SeatPair> get_switches_nostop(int n) {
+  // Initial budget is derived from https://math.stackexchange.com/questions/833541/making-friends-around-a-circular-table
+  int initial_budget = std::ceil(n * (n - 3) / 8.0);
+  int current_budget = initial_budget;
+
+  std::cout << "Working with a table of size " << n << std::endl;
+
+  while (true) {
+    std::cout << "  Trying switch budget: " << current_budget << std::endl;
+    auto result = get_switches(n, current_budget);
+    if (result.has_value()) {
+      return result.value();
+    }
+    current_budget++;
+  }
+}
+
+
 int main() {
   int n = 9;
-  int switch_budget = 5;
+  auto result = get_switches_nostop(n);
+  std::cout << "Success!" << std::endl;
+  print(result);
 
-  std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
-  std::cout << "For " << n << " people with " << switch_budget
-            << " switches:" << std::endl;
-  if (v.has_value()) {
-    print(v.value());
-  } else {
-    std::cout << "No results" << std::endl;
-  }
+  // int switch_budget = 5;
+
+  // std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
+  // std::cout << "For " << n << " people with " << switch_budget
+  //           << " switches:" << std::endl;
+  // if (v.has_value()) {
+  //   print(v.value());
+  // } else {
+  //   std::cout << "No results" << std::endl;
+  // }
 }
