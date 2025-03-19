@@ -205,18 +205,21 @@ std::vector<SeatPair> get_switches_nostop(int n) {
 
 int main() {
   int n = 9;
-  auto result = get_switches_nostop(n);
-  std::cout << "Success!" << std::endl;
-  print(result);
+  bool do_nonstop = false;
 
-  // int switch_budget = 5;
-
-  // std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
-  // std::cout << "For " << n << " people with " << switch_budget
-  //           << " switches:" << std::endl;
-  // if (v.has_value()) {
-  //   print(v.value());
-  // } else {
-  //   std::cout << "No results" << std::endl;
-  // }
+  if (do_nonstop) {
+    auto result = get_switches_nostop(n);
+    std::cout << "Success!" << std::endl;
+    print(result);
+  } else {
+    int switch_budget = 5;
+    std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
+    std::cout << "For " << n << " people with " << switch_budget
+              << " switches:" << std::endl;
+    if (v.has_value()) {
+      print(v.value());
+    } else {
+      std::cout << "No results" << std::endl;
+    }
+  }
 }
