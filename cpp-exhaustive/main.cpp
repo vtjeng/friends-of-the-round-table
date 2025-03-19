@@ -147,23 +147,23 @@ std::optional<std::vector<SeatPair>> get_switches_helper(
 /**
  Given a table of size `n`, determines whether it is possible for every guest
  to have sat next to every other guest at some point, when we have up to
- `num_switches` pairs of guests switching seats.
+ `switch_budget` pairs of guests switching seats.
 
  See
  https://math.stackexchange.com/questions/833541/making-friends-around-a-circular-table
  for full details.
 
  @returns A sequence of the positions of the pairs of seats being switched, or
-     std::nullopt if no such sequence of length up to `num_switches` exists.
+     std::nullopt if no such sequence of length up to `switch_budget` exists.
  */
-std::optional<std::vector<SeatPair>> get_switches(int n, int num_switches) {
+std::optional<std::vector<SeatPair>> get_switches(int n, int switch_budget) {
   // This function initializes:
   //   1. An empty sequence of switches.
   //   2. The table in its initial configuration.
   //   3. An adjacency count corresponding to the initial table configuration.
 
   std::vector<SeatPair> switches;
-  switches.reserve(num_switches);
+  switches.reserve(switch_budget);
 
   // initialize table with guest i in seat i.
   // (the specific identity of which guest gets to sit where is not
@@ -181,15 +181,15 @@ std::optional<std::vector<SeatPair>> get_switches(int n, int num_switches) {
     ++adjacency_count[pair_to_index(SeatPair{table[i], table[i + 1]})];
   }
 
-  return get_switches_helper(num_switches, switches, table, adjacency_count);
+  return get_switches_helper(switch_budget, switches, table, adjacency_count);
 }
 
 int main() {
   int n = 9;
-  int num_switches = 5;
+  int switch_budget = 5;
 
-  std::optional<std::vector<SeatPair>> v = get_switches(n, num_switches);
-  std::cout << "For " << n << " people with " << num_switches
+  std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
+  std::cout << "For " << n << " people with " << switch_budget
             << " switches:" << std::endl;
   if (v.has_value()) {
     print(v.value());
