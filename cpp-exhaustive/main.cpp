@@ -15,6 +15,8 @@ struct SeatPair {
   int second;
 };
 
+// pair_to_index works with unordered pairs of distinct non-negative indexes
+
 /**
  Converts an unordered pair of distinct non-negative indexes to a
  single non-negative index.
@@ -33,11 +35,11 @@ struct SeatPair {
  {pair_to_index({x1, x2}) | 0≤x1≤n ∧ 0≤x2≤n ∧ x1≠x2} = {0, 1, ..., T_{n+1}-1},
  where `T_n` is the nth triangular number.
  */
-inline int pair_to_index(const SeatPair &input) {
-  if (input.first > input.second) {
-    return input.first * (input.first - 1) / 2 + input.second;
+inline int pair_to_index(int first, int second) {
+  if (first > second) {
+    return first * (first - 1) / 2 + second;
   }
-  return input.second * (input.second - 1) / 2 + input.first;
+  return second * (second - 1) / 2 + first;
 }
 
 void print(std::vector<int> const &input) {
@@ -89,7 +91,7 @@ std::optional<std::vector<SeatPair>> get_switches_helper(
   for (int i = 0; i < n - 1; ++i) {
     for (int j = i + 1; j < n; ++j) {
       // Iterate over every possible pair of seats (i, j)
-      current_switches.push_back(SeatPair({i, j}));
+      current_switches.push_back(SeatPair{i, j});
       std::iter_swap(current_table.begin() + i, current_table.begin() + j);
       // We identify the guests that moved and take note of the
       // guests that they are sitting to the left and right of.
@@ -98,16 +100,15 @@ std::optional<std::vector<SeatPair>> get_switches_helper(
       // consider swapping any two guests on a three-person table).
       // Array Initialization:
       // https://stackoverflow.com/questions/12844475/why-cant-simple-initialize-with-braces-2d-stdarray
-      std::array<SeatPair, 4> newly_adjacent_guest_pairs = {{
-          {current_table[i], current_table[(i + 1) % n]},
-          {current_table[i], current_table[(i - 1 + n) % n]},
-          {current_table[j], current_table[(j + 1) % n]},
-          {current_table[j], current_table[(j - 1 + n) % n]},
-      }};
-      for (const auto &guest_pair : newly_adjacent_guest_pairs) {
-        const int idx = pair_to_index(guest_pair);
-        ++adjacency_count[idx];
-      }
+      const int next_i = (i + 1) % n;
+      const int prev_i = (i - 1 + n) % n;
+      const int next_j = (j + 1) % n;
+      const int prev_j = (j - 1 + n) % n;
+
+      ++adjacency_count[pair_to_index(current_table[i], current_table[next_i])];
+      ++adjacency_count[pair_to_index(current_table[i], current_table[prev_i])];
+      ++adjacency_count[pair_to_index(current_table[j], current_table[next_j])];
+      ++adjacency_count[pair_to_index(current_table[j], current_table[prev_j])];
 
       // check if the adjacency count is positive for all pairs of guests
       if (std::all_of(adjacency_count.begin(), adjacency_count.end(),
@@ -118,7 +119,7 @@ std::optional<std::vector<SeatPair>> get_switches_helper(
         return current_switches;
       }
 
-      // if not, we check if the switch we executed was the last available.
+      // if not, we keep trying more switches.
       if (num_remaining_switches > 1) {
         const std::optional<std::vector<SeatPair>> r =
             get_switches_helper(num_remaining_switches - 1, current_switches,
@@ -134,10 +135,10 @@ std::optional<std::vector<SeatPair>> get_switches_helper(
       // `current_switches` is good. We retrace our steps, undoing the changes
       // to `adjacency_count`, `current_table`, and remove the switch from
       // `current_switches`.
-      for (const auto &guest_pair : newly_adjacent_guest_pairs) {
-        const int idx = pair_to_index(guest_pair);
-        --adjacency_count[idx];
-      }
+      --adjacency_count[pair_to_index(current_table[i], current_table[next_i])];
+      --adjacency_count[pair_to_index(current_table[i], current_table[prev_i])];
+      --adjacency_count[pair_to_index(current_table[j], current_table[next_j])];
+      --adjacency_count[pair_to_index(current_table[j], current_table[prev_j])];
       std::iter_swap(current_table.begin() + i, current_table.begin() + j);
       current_switches.pop_back();
     }
@@ -177,9 +178,9 @@ std::optional<std::vector<SeatPair>> get_switches(int n, int switch_budget) {
   std::vector<int> adjacency_count(num_pairs);
   // adjacency_count is set to 1 for every pair of guests sitting
   // next to each other in the initial table arrangement
-  ++adjacency_count[pair_to_index(SeatPair{table[0], table[n - 1]})];
+  ++adjacency_count[pair_to_index(table[0], table[n - 1])];
   for (int i = 0; i < n - 1; ++i) {
-    ++adjacency_count[pair_to_index(SeatPair{table[i], table[i + 1]})];
+    ++adjacency_count[pair_to_index(table[i], table[i + 1])];
   }
 
   return get_switches_helper(switch_budget, switches, table, adjacency_count);
@@ -212,12 +213,12 @@ int main() {
     std::cout << "Success!" << std::endl;
     print(result);
   } else {
-    int switch_budget = 5;
-    std::optional<std::vector<SeatPair>> v = get_switches(n, switch_budget);
+    int switch_budget = 6;
+    auto result = get_switches(n, switch_budget);
     std::cout << "For " << n << " people with " << switch_budget
               << " switches:" << std::endl;
-    if (v.has_value()) {
-      print(v.value());
+    if (result.has_value()) {
+      print(result.value());
     } else {
       std::cout << "No results" << std::endl;
     }
