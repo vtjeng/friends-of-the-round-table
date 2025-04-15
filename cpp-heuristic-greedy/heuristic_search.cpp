@@ -53,15 +53,33 @@ int num_new_friend_pairs(const vector<int>& seating, const set<pair<int, int>>& 
     return new_friend_pairs(seating, existing, swap).size();
 }
 
+#include <unordered_set>
+
 struct GreedySwapper {
     vector<int> seating;
     set<pair<int, int>> existing;
     vector<pair<int, int>> swaps;
     int n;
     vector<pair<int, int>> all_possible_swaps;
-    mt19937 rng;
 
-    GreedySwapper(int table_size, mt19937& rng_ref) : seating(table_size), rng(rng_ref) {
+    // For diagnostics: serialize all_possible_swaps
+    string swaps_order_string() const {
+        string s;
+        for (auto& p : all_possible_swaps) {
+            s += to_string(p.first) + "," + to_string(p.second) + ";";
+        }
+        return s;
+    }
+    // Serialize the sequence of swaps performed
+    string swap_sequence_string() const {
+        string s;
+        for (auto& p : swaps) {
+            s += to_string(p.first) + "," + to_string(p.second) + ";";
+        }
+        return s;
+    }
+
+    GreedySwapper(int table_size) : seating(table_size) {
         n = table_size;
         for (int i = 0; i < n; ++i) seating[i] = i;
         existing = all_friend_pairs(seating);
@@ -71,7 +89,6 @@ struct GreedySwapper {
                 all_possible_swaps.emplace_back(i, j);
             }
         }
-        shuffle(all_possible_swaps.begin(), all_possible_swaps.end(), rng);
     }
 
     pair<int, int> generate_swap() {
@@ -87,8 +104,7 @@ struct GreedySwapper {
                 if (num_new == 4) break;
             }
         }
-        uniform_int_distribution<int> dist(0, max_swaps.size() - 1);
-        return max_swaps[dist(rng)];
+        return max_swaps[0];
     }
 
     void do_swap(pair<int, int> swap) {
@@ -125,22 +141,40 @@ int main(int argc, char* argv[]) {
     mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
     int best_swaps = table_size * (table_size - 1) / 2;
     vector<pair<int, int>> best_sequence;
+    int print_interval = 1000;
+    unordered_set<string> unique_swap_orders; // Track unique all_possible_swaps orderings
+    unordered_set<string> unique_swap_sequences; // Track unique swap sequences
     for (int t = 0; t < num_trials; ++t) {
-        GreedySwapper swapper(table_size, rng);
+        GreedySwapper swapper(table_size);
+        // Shuffle all_possible_swaps with global rng
+        shuffle(swapper.all_possible_swaps.begin(), swapper.all_possible_swaps.end(), rng);
         while (!swapper.is_everyone_friends() && swapper.num_swaps() < best_swaps) {
             auto s = swapper.generate_swap();
             swapper.do_swap(s);
+        }
+        // Track the swap order for this trial
+        unique_swap_orders.insert(swapper.swaps_order_string());
+        // Track the swap sequence for this trial
+        // (serialize the sequence of swaps performed)
+        unique_swap_sequences.insert(swapper.swap_sequence_string());
+        // Diagnostics: print unique swap sequence info for this trial
+        if ((t+1) % print_interval == 0) {
+            cout << "\rTrial " << (t+1) << ": " << swapper.swaps.size() << " swaps, "
+                 << unique_swap_sequences.size() << " unique swap sequences tried" << flush;
         }
         if (swapper.is_everyone_friends() && swapper.num_swaps() <= best_swaps) {
             best_swaps = swapper.num_swaps();
             best_sequence = swapper.swaps;
         }
     }
+    cout << endl;
     cout << "Best number of swaps: " << best_swaps << "\n";
     cout << "Swap sequence: ";
     for (auto& s : best_sequence) {
         cout << "(" << s.first << "," << s.second << ") ";
     }
     cout << endl;
+    cout << "Unique all_possible_swaps orderings seen: " << unique_swap_orders.size() << endl;
+    cout << "Unique swap sequences tried: " << unique_swap_sequences.size() << endl;
     return 0;
 }
