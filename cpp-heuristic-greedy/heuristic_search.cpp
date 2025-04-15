@@ -32,9 +32,7 @@ unordered_set<pair<int, int>, pair_hash> all_friend_pairs(const vector<int>& sea
 // Helper: sorted pair for positions i and j
 pair<int, int> get_pair(const vector<int>& seating, int i, int j) {
     int n = seating.size();
-    int a = seating[(i + n) % n];
-    int b = seating[(j + n) % n];
-    if (a > b) swap(a, b);
+    auto [a, b] = minmax(seating[(i + n) % n], seating[(j + n) % n]);
     return {a, b};
 }
 
