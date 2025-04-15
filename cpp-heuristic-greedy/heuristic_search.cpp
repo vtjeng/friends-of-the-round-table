@@ -1,12 +1,12 @@
-#include <iostream>
-#include <vector>
-#include <set>
-#include <unordered_set>
 #include <algorithm>
-#include <random>
 #include <chrono>
-#include <tuple>
 #include <cstring>
+#include <iostream>
+#include <random>
+#include <set>
+#include <tuple>
+#include <unordered_set>
+#include <vector>
 
 using namespace std;
 
@@ -24,7 +24,7 @@ unordered_set<pair<int, int>, pair_hash> all_friend_pairs(const vector<int>& sea
     friends.reserve(n);
     for (int i = 0; i < n; ++i) {
         auto [a, b] = minmax(seating[i], seating[(i + 1) % n]);
-        friends.insert({a, b});
+        friends.emplace(a, b);
     }
     return friends;
 }
@@ -57,8 +57,6 @@ vector<pair<int, int>> new_friend_pairs(const vector<int>& seating, const unorde
 int num_new_friend_pairs(const vector<int>& seating, const unordered_set<pair<int, int>, pair_hash>& existing, pair<int, int> swap) {
     return new_friend_pairs(seating, existing, swap).size();
 }
-
-#include <unordered_set>
 
 struct GreedySwapper {
     vector<int> seating;
