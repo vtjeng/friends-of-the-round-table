@@ -23,9 +23,7 @@ unordered_set<pair<int, int>, pair_hash> all_friend_pairs(const vector<int>& sea
     int n = seating.size();
     friends.reserve(n);
     for (int i = 0; i < n; ++i) {
-        int a = seating[i];
-        int b = seating[(i + 1) % n];
-        if (a > b) swap(a, b);
+        auto [a, b] = minmax(seating[i], seating[(i + 1) % n]);
         friends.insert({a, b});
     }
     return friends;
