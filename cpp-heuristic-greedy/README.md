@@ -24,6 +24,20 @@ Run the program with:
 Each trial attempts to find a minimal swap sequence such that everyone becomes friends with everyone else, using a greedy heuristic to maximize new friendships per swap.
 
 ## Files
+
 - `heuristic_search.cpp`: Main implementation.
 - `Makefile`: For building the project.
 
+## Benchmarking Results
+
+The following benchmarks were run with 10,000 trials for various table sizes, run on a Windows 10 machine with WSL and an Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz.
+
+| Table Size | Time (seconds) | Best Swaps Found |
+| ---------- | -------------- | ---------------- |
+| 10         | <1             | 10               |
+| 15         | 2.64           | 26               |
+| 20         | 9.57           | 49               |
+| 25         | 25.18          | 79               |
+| 30         | 55.91          | 116              |
+| 35         | 111            | 161              |
+| 40         | 187            | 211              |

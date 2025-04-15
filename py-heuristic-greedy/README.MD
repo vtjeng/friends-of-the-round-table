@@ -28,6 +28,7 @@ optional arguments:
 ```
 
 `exhaustive_search.py` is provided for a sanity check (but is very slow).
+
 ```
 $ ./exhaustive_search.py --help
 usage: exhaustive_search.py [-h] table_size
@@ -46,7 +47,7 @@ optional arguments:
 If you'd like to see all of the checkpoint information at once, you can use `summarize_heuristic_search_checkpoint_info.py`.
 
 ```
-$ ./summarize_heuristic_search_checkpoint_info.py 
+$ ./summarize_heuristic_search_checkpoint_info.py
 checkpoint
 GreedySwapper
         5 - best:    3, seen in 2630/       2630
@@ -79,3 +80,14 @@ GreedySwapper
 
 ```
 
+## Benchmarking Results
+
+The following benchmarks were run with 10,000 trials for various table sizes, run on a Windows 10 machine with WSL and an Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz.
+
+| Table Size | Time (seconds) | Best Swaps Found |
+| ---------- | -------------- | ---------------- |
+| 10         | 6.26           | 10               |
+| 15         | 25.78          | 26               |
+| 20         | 76             | 49               |
+| 25         | 177            | 79               |
+| 30         | 370            | 116              |
