@@ -213,7 +213,7 @@ int main() {
     std::cout << "Success!" << std::endl;
     print(result);
   } else {
-    int switch_budget = 6;
+    int switch_budget = 7;
     auto result = get_switches(n, switch_budget);
     std::cout << "For " << n << " people with " << switch_budget
               << " switches:" << std::endl;
