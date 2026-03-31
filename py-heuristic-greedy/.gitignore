@@ -10,3 +10,6 @@ logs/
 
 # Ignore personal notes
 notes/
+
+# Ignore local virtual environment
+.venv/

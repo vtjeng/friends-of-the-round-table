@@ -1,5 +1,17 @@
 A heuristic approach implemented in Python. Your entry point is the script `heuristic_search.py`
 
+## Setup
+
+```bash
+uv sync
+```
+
+## Run
+
+```bash
+uv run heuristic_search.py 10
+```
+
 ```
 $ ./heuristic_search.py --help
 usage: heuristic_search.py [-h]
@@ -30,7 +42,7 @@ optional arguments:
 `exhaustive_search.py` is provided for a sanity check (but is very slow).
 
 ```
-$ ./exhaustive_search.py --help
+$ uv run exhaustive_search.py --help
 usage: exhaustive_search.py [-h] table_size
 
 Check every possible sequence of swaps for a table of the specified size,
@@ -47,7 +59,7 @@ optional arguments:
 If you'd like to see all of the checkpoint information at once, you can use `summarize_heuristic_search_checkpoint_info.py`.
 
 ```
-$ ./summarize_heuristic_search_checkpoint_info.py
+$ uv run summarize_heuristic_search_checkpoint_info.py
 checkpoint
 GreedySwapper
         5 - best:    3, seen in 2630/       2630

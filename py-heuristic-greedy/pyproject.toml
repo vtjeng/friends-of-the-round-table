@@ -1,0 +1,14 @@
+[project]
+name = "friends-of-the-round-table-py-heuristic-greedy"
+version = "0.1.0"
+description = "Python heuristic search tools for Friends of the Round Table"
+readme = "README.MD"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=1.17.2",
+    "tqdm>=4.46.0",
+]
+
+[tool.uv]
+package = false
+exclude-newer = "30 days"
